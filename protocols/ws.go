@@ -1,15 +1,15 @@
 package protocols
 
 import (
-	"main/manager"
 	"strings"
+	"webchannels/manager"
 
-	"github.com/gofiber/contrib/websocket"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/contrib/v3/websocket"
+	"github.com/gofiber/fiber/v3"
 )
 
 func UseWs(app *fiber.App, core *manager.Core) {
-	app.Use("/ws", func(c *fiber.Ctx) error {
+	app.Use("/ws", func(c fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {
 			c.Locals("allowed", true)
 			return c.Next()
@@ -17,7 +17,7 @@ func UseWs(app *fiber.App, core *manager.Core) {
 		return fiber.ErrUpgradeRequired
 	})
 
-	app.Get("/ws/*", func(ctx *fiber.Ctx) error {
+	app.Get("/ws/*", func(ctx fiber.Ctx) error {
 		channel := strings.Replace(ctx.OriginalURL(), "/ws", "", 1)
 
 		dataChan := core.Add(channel, 1)

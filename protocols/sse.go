@@ -4,15 +4,14 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"main/manager"
 	"strings"
+	"webchannels/manager"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/valyala/fasthttp"
+	"github.com/gofiber/fiber/v3"
 )
 
 func UseSSE(app *fiber.App, core *manager.Core) {
-	app.Get("/sse/*", func(ctx *fiber.Ctx) error {
+	app.Get("/sse/*", func(ctx fiber.Ctx) error {
 		channel := strings.Replace(ctx.OriginalURL(), "/sse", "", 1)
 
 		dataChan := core.Add(channel, 1)
@@ -22,7 +21,7 @@ func UseSSE(app *fiber.App, core *manager.Core) {
 		ctx.Set("Connection", "keep-alive")
 		ctx.Set("Transfer-Encoding", "chunked")
 
-		ctx.Status(fiber.StatusOK).Context().SetBodyStreamWriter(fasthttp.StreamWriter(func(w *bufio.Writer) {
+		ctx.SendStreamWriter(func(w *bufio.Writer) {
 			for {
 				strData, _ := json.Marshal(<-dataChan)
 				fmt.Fprintf(w, "data: %s\n\n", strData)
@@ -33,7 +32,7 @@ func UseSSE(app *fiber.App, core *manager.Core) {
 					break
 				}
 			}
-		}))
+		})
 
 		return nil
 	})

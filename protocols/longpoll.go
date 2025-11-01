@@ -1,14 +1,14 @@
 package protocols
 
 import (
-	"main/manager"
 	"strings"
+	"webchannels/manager"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 func UseLongpoll(app *fiber.App, core *manager.Core) {
-	app.Get("/longpoll/*", func(ctx *fiber.Ctx) error {
+	app.Get("/longpoll/*", func(ctx fiber.Ctx) error {
 		channel := strings.Replace(ctx.OriginalURL(), "/longpoll", "", 1)
 
 		dataChan := core.Add(channel, 1)

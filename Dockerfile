@@ -7,6 +7,6 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-RUN go build -v -o /usr/local/bin/app ./main.go
+RUN go build -v -o /usr/local/bin/app -ldflags "-s -w" ./main.go
 
 CMD ["app"]

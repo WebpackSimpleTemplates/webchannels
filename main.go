@@ -1,11 +1,11 @@
 package main
 
 import (
-	"main/manager"
-	"main/protocols"
+	"webchannels/manager"
+	"webchannels/protocols"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
 )
 
 func main() {
@@ -19,10 +19,10 @@ func main() {
 	protocols.UseWs(app, core)
 	protocols.UseSSE(app, core)
 
-	app.Post("/*", func(c *fiber.Ctx) error {
+	app.Post("/*", func(c fiber.Ctx) error {
 		data := new(interface{})
 
-		if err := c.BodyParser(data); err != nil {
+		if err := c.Bind().Body(data); err != nil {
 			return err
 		}
 
